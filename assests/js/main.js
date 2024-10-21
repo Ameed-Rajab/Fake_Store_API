@@ -47,7 +47,7 @@ const displayproduct = async (page=1) => {
         const result = data.products.map((product) => {
             return `<div class="product"> 
        
-         <img src="${product.thumbnail}" alt="${product.description}"/>
+         <img src="${product.thumbnail}" alt="${product.description}" class="images"/>
           <h2>${product.title}</h2>
           <span>${product.price} $</span> 
 
@@ -74,6 +74,7 @@ const displayproduct = async (page=1) => {
                  paginationLink += `<li class="page-item"><button onclick=displayproduct('${parseInt(page)+1}') class="page-link" >&raquo;</button></li>`
         }
         document.querySelector(".pagination").innerHTML = paginationLink;
+       modal();
     } catch (erorr) {
         document.querySelector(".products .row").innerHTML = "<p>erorr to load category</p>";
 
@@ -113,3 +114,63 @@ const countDown = () => {
 setInterval(() => {
     countDown()
 }, 1000);  
+function modal() {
+    const modal = document.querySelector(".my-modal");
+    const closeBtn = document.querySelector(".close-btn");
+    const leftBtn = document.querySelector(".left-btn");
+    const rightBtn = document.querySelector(".right-btn");
+    const images =Array.from( document.querySelectorAll(".images"));
+    let currentIndex = 0;
+    images.forEach(function(img) {
+        img.onclick = function(e) {
+           modal.classList.remove("d-none");
+           modal.querySelector("img").setAttribute("src", e.target.src);
+           const currentImage=e.target;
+           currentIndex = images.indexOf(currentImage);
+        }
+    });
+    rightBtn.addEventListener("click", function() {
+        currentIndex++;
+        if(currentIndex>=images.length){
+            currentIndex=0;
+        }
+        const src = images[currentIndex].src;
+        modal.querySelector("img").setAttribute("src", src);
+    });
+    leftBtn.addEventListener("click", function() {
+        currentIndex--;
+        if(currentIndex<0){
+            currentIndex=images.length-1;
+        }
+        const src = images[currentIndex].src;
+        modal.querySelector("img").setAttribute("src", src);
+    });
+    
+    closeBtn.onclick = function() {
+        modal.classList.add("d-none");
+    }
+    document.addEventListener("keydown", function(e) {
+      
+        if (e.code == "ArrowRight") {
+            currentIndex++;
+            if (currentIndex >= images.length) {
+                currentIndex = 0;
+            }
+            const src = images[currentIndex].src;
+            modal.querySelector("img").setAttribute("src", src);
+        }
+        else if(e.code == "ArrowLeft") {
+            currentIndex--;
+            if(currentIndex<0){
+                currentIndex=images.length-1;
+            }
+            const src = images[currentIndex].src;
+            modal.querySelector("img").setAttribute("src", src);
+        }
+        else if(e.code == "Escape") {
+            modal.classList.add("d-none");
+        }
+    });
+   
+    
+}
